@@ -32,6 +32,12 @@ void UDoorOpener::OpenDoor()
 	this->GetOwner()->SetActorRotation(DoorAngle);
 }
 
+void UDoorOpener::CloseDoor()
+{
+	FRotator DoorAngle = FRotator(0.0F, 0.0F, 0.0F);
+	this->GetOwner()->SetActorRotation(DoorAngle);
+}
+
 // Called every frame
 void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -41,7 +47,13 @@ void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	//If the PawnThatOpensTheDoor is in the presure plate
 	if (PressurePlate->IsOverlappingActor(PawnThatOpensTheDoor)) {
 		OpenDoor();
+		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
 	}
+
+	if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorCloseDealy) {
+		CloseDoor();
+	}
+	
 
 	// ...
 }
