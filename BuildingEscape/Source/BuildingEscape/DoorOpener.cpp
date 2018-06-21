@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DoorOpener.h"
+#include "Engine/World.h"
 #include "GameFramework/Actor.h"
 
 
@@ -19,21 +20,28 @@ UDoorOpener::UDoorOpener()
 void UDoorOpener::BeginPlay()
 {
 	Super::BeginPlay();
-	FRotator DoorAngle = FRotator(0.0F, 80.0F, 0.0F);
-
-	this->GetOwner()->SetActorRotation(DoorAngle);
-
-
-
+	
+	PawnThatOpensTheDoor =  GetWorld()->GetFirstPlayerController()->GetPawn();
 	// ...
 	
 }
 
+void UDoorOpener::OpenDoor()
+{
+	FRotator DoorAngle = FRotator(0.0F, 80.0F, 0.0F);
+	this->GetOwner()->SetActorRotation(DoorAngle);
+}
 
 // Called every frame
 void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	//Poll the trigger volume
+	//If the PawnThatOpensTheDoor is in the presure plate
+	if (PressurePlate->IsOverlappingActor(PawnThatOpensTheDoor)) {
+		OpenDoor();
+	}
 
 	// ...
 }
