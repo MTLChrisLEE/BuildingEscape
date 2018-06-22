@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Components/InputComponent.h"
 #include "Grabber.generated.h"
 
 
@@ -29,5 +31,10 @@ private:
 	FVector Location;
 	FRotator Rotation;
 	float Reach = 100.F;
+	UPhysicsHandleComponent* PhysicsHandler = nullptr;
+	UInputComponent* InputComponent = nullptr;
 	
+	//Ray-cast and grab 
+	void Grab();
+	void Release();
 };

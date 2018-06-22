@@ -21,10 +21,36 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Error, TEXT("GRABBER REPORT FOR DUTY"));
+	PhysicsHandler = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 
 	// ...
-	
+	if (PhysicsHandler) {
+
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("%s missing physics handle component"), *(GetOwner()->GetName()))
+	}
+
+
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (InputComponent) {
+		UE_LOG(LogTemp, Error, TEXT("Input component found"))
+		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);			
+		InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Release);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("%s missing Input Component handle component"), *(GetOwner()->GetName()))
+	}	
 }
+
+void UGrabber::Grab() {
+	UE_LOG(LogTemp, Error, TEXT("GRAB PRESSED"));
+}
+
+void UGrabber::Release() {
+	UE_LOG(LogTemp, Error, TEXT("RELEASED"));
+}
+
 
 
 // Called every frame
@@ -43,7 +69,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	DrawDebugLine(GetWorld(), Location, LineTraceEnd, FColor(255,0,0),false,0,0,3.0);
 
-	UE_LOG(LogTemp, Warning, TEXT("Location is %s, Rotation is %s"), *location, *rotation);
+	//UE_LOG(LogTemp, Warning, TEXT("Location is %s, Rotation is %s"), *location, *rotation);
 
 
 
@@ -65,7 +91,6 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	if (ActorHit) {
 		UE_LOG(LogTemp, Warning, TEXT("%s is hit"), *(ActorHit->GetName()))
-
 	}
 
 	
