@@ -33,14 +33,6 @@ void UDoorOpener::BeginPlay()
 
 }
 
-void UDoorOpener::OpenDoor()
-{
-	/*FRotator DoorAngle = FRotator(0.0F, 80.0F, 0.0F);
-	this->GetOwner()->SetActorRotation(DoorAngle);*/
-
-	OnOpenRequest.Broadcast();
-}
-
 void UDoorOpener::CloseDoor()
 {
 	FRotator DoorAngle = FRotator(0.0F, 0.0F, 0.0F);
@@ -54,13 +46,11 @@ void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 	//Poll the trigger volume
 	//If the PawnThatOpensTheDoor is in the presure plate
-	if (GetTotalMassofActorOnPlate()>=50.F) {
-		OpenDoor();
-		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
-	}
+	if (GetTotalMassofActorOnPlate()>= TriggerMass) {
+		OnOpenRequest.Broadcast();
+	}else{
 
-	if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorCloseDealy) {
-		CloseDoor();
+		OnCloseRequest.Broadcast();
 	}
 	// ...
 }
