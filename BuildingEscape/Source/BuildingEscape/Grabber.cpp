@@ -12,7 +12,6 @@ UGrabber::UGrabber()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
 
@@ -28,11 +27,24 @@ void UGrabber::BeginPlay()
 
 void UGrabber::Grab() {
 	UE_LOG(LogTemp, Error, TEXT("GRAB PRESSED"));
-	GetFirstPhysicsBodyInReach();
+	auto HitResult = GetFirstPhysicsBodyInReach();
+	auto ComponentToGrab = HitResult.GetComponent();
+	auto ActorHit = HitResult.GetActor();
+
+	if (ActorHit) {
+		PhysicsHandler->GrabComponentAtLocation(
+			ComponentToGrab,
+			NAME_None,
+			ActorHit->GetActorLocation()			
+		);
+	}
 }
 
 void UGrabber::Release() {
 	UE_LOG(LogTemp, Error, TEXT("RELEASED"));
+
+	PhysicsHandler->ReleaseComponent();
+
 }
 
 
@@ -63,10 +75,18 @@ void UGrabber::SetupInputComponent()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	//Draw a red trace line
 	
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(Location, Rotation);
+	FString location = Location.ToString();
+	FString rotation = Rotation.ToString();
 
+	FVector LineTraceEnd = Location + Rotation.Vector() * Reach;
 
+	if (PhysicsHandler && PhysicsHandler->GrabbedComponent)
+	{
+		PhysicsHandler->SetTargetLocation(LineTraceEnd);
+	}
+	
 }
 
 
@@ -99,6 +119,6 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 		UE_LOG(LogTemp, Warning, TEXT("%s is hit"), *(ActorHit->GetName()))
 	}
 	
-	return FHitResult();
+	return Result;
 }
 
