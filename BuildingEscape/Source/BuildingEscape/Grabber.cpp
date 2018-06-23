@@ -32,10 +32,11 @@ void UGrabber::Grab() {
 	auto ActorHit = HitResult.GetActor();
 
 	if (ActorHit) {
-		PhysicsHandler->GrabComponentAtLocation(
+		PhysicsHandler->GrabComponent(
 			ComponentToGrab,
 			NAME_None,
-			ActorHit->GetActorLocation()			
+			ActorHit->GetActorLocation(),
+			true
 		);
 	}
 }
@@ -76,31 +77,17 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(Location, Rotation);
-	FString location = Location.ToString();
-	FString rotation = Rotation.ToString();
-
-	FVector LineTraceEnd = Location + Rotation.Vector() * Reach;
-
+	
 	if (PhysicsHandler && PhysicsHandler->GrabbedComponent)
 	{
-		PhysicsHandler->SetTargetLocation(LineTraceEnd);
+		PhysicsHandler->SetTargetLocation(GetLineTraceEnd());
 	}
 	
 }
 
 
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
-{
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(Location, Rotation);
-	FString location = Location.ToString();
-	FString rotation = Rotation.ToString();
-
-	FVector LineTraceEnd = Location + Rotation.Vector() * Reach;
-
-	DrawDebugLine(GetWorld(), Location, LineTraceEnd, FColor(255, 0, 0), false, 0, 0, 3.0);
-
-	//Line-trace
+{	
 	FHitResult Result;
 
 	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
@@ -108,7 +95,7 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 	GetWorld()->LineTraceSingleByObjectType(
 		OUT Result,
 		Location,
-		LineTraceEnd,
+		GetLineTraceEnd(),
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		TraceParameters
 	);
@@ -120,5 +107,16 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 	}
 	
 	return Result;
+}
+
+FVector UGrabber::GetLineTraceEnd()
+{
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(Location, Rotation);
+	FString location = Location.ToString();
+	FString rotation = Rotation.ToString();
+
+	LineTraceEnd = Location + Rotation.Vector() * Reach;
+
+	return LineTraceEnd;
 }
 

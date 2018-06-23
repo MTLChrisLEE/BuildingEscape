@@ -33,7 +33,7 @@ private:
 	float Reach = 100.F;
 	UPhysicsHandleComponent* PhysicsHandler = nullptr;
 	UInputComponent* InputComponent = nullptr;
-	
+	FVector LineTraceEnd;
 
 	void FindPhysicsHandleComponent();
 
@@ -43,6 +43,7 @@ private:
 	//Return hit for first physics body in reach
 	const FHitResult GetFirstPhysicsBodyInReach();
 
+	FVector GetLineTraceEnd();
 
 
 	//Ray-cast and grab 
