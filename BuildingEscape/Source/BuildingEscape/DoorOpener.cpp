@@ -3,6 +3,7 @@
 #include "DoorOpener.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "Components/PrimitiveComponent.h"
 
 
 // Sets default values for this component's properties
@@ -21,7 +22,7 @@ void UDoorOpener::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	PawnThatOpensTheDoor =  GetWorld()->GetFirstPlayerController()->GetPawn();
+	//PawnThatOpensTheDoor =  GetWorld()->GetFirstPlayerController()->GetPawn();
 	// ...
 	
 }
@@ -45,7 +46,7 @@ void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 	//Poll the trigger volume
 	//If the PawnThatOpensTheDoor is in the presure plate
-	if (PressurePlate->IsOverlappingActor(PawnThatOpensTheDoor)) {
+	if (GetTotalMassofActorOnPlate()>=50.F) {
 		OpenDoor();
 		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
 	}
@@ -53,8 +54,19 @@ void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorCloseDealy) {
 		CloseDoor();
 	}
-	
-
 	// ...
 }
+
+float UDoorOpener::GetTotalMassofActorOnPlate() {
+
+	float total = 0.0F;
+	TArray<AActor*> OverlappingActors;
+	PressurePlate->GetOverlappingActors(OverlappingActors);
+	for (const auto* Actor : OverlappingActors) {
+		total+=Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+	}
+	return total;
+}
+
+
 
