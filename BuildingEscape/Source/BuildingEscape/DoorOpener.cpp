@@ -24,7 +24,11 @@ void UDoorOpener::BeginPlay()
 	
 	//PawnThatOpensTheDoor =  GetWorld()->GetFirstPlayerController()->GetPawn();
 	// ...
-	
+
+	if (!PressurePlate) {
+		UE_LOG(LogTemp,Warning,TEXT("%s is missing"),*(GetOwner()->GetName(0)))
+	}
+
 }
 
 void UDoorOpener::OpenDoor()
@@ -61,6 +65,7 @@ float UDoorOpener::GetTotalMassofActorOnPlate() {
 
 	float total = 0.0F;
 	TArray<AActor*> OverlappingActors;
+	
 	PressurePlate->GetOverlappingActors(OverlappingActors);
 	for (const auto* Actor : OverlappingActors) {
 		total+=Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
