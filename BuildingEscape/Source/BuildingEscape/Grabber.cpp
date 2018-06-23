@@ -77,7 +77,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
-	if (!PressurePlate) {
+	if (!PhysicsHandler) {
 		return;
 	}
 	if (PhysicsHandler && PhysicsHandler->GrabbedComponent)

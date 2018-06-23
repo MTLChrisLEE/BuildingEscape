@@ -6,6 +6,8 @@
 #include "Components/PrimitiveComponent.h"
 
 
+
+
 // Sets default values for this component's properties
 UDoorOpener::UDoorOpener()
 {
@@ -26,15 +28,17 @@ void UDoorOpener::BeginPlay()
 	// ...
 
 	if (!PressurePlate) {
-		UE_LOG(LogTemp,Warning,TEXT("%s is missing"),*(GetOwner()->GetName(0)))
+		UE_LOG(LogTemp,Warning,TEXT("%s is missing"),*(GetOwner()->GetName()))
 	}
 
 }
 
 void UDoorOpener::OpenDoor()
 {
-	FRotator DoorAngle = FRotator(0.0F, 80.0F, 0.0F);
-	this->GetOwner()->SetActorRotation(DoorAngle);
+	/*FRotator DoorAngle = FRotator(0.0F, 80.0F, 0.0F);
+	this->GetOwner()->SetActorRotation(DoorAngle);*/
+
+	OnOpenRequest.Broadcast();
 }
 
 void UDoorOpener::CloseDoor()

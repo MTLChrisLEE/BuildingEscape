@@ -7,7 +7,7 @@
 #include "Engine/TriggerVolume.h"
 #include "DoorOpener.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -30,6 +30,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(BlueprintAssignable)
+		FOnOpenRequest OnOpenRequest;
 
 private:
 
@@ -45,8 +47,5 @@ private:
 	float LastDoorOpenTime;
 	float GetTotalMassofActorOnPlate();
 
-
-	//UPROPERTY(EditAnywhere)
-	//	AActor* PawnThatOpensTheDoor; //Remember pawn inherits from actor
 	
 };
